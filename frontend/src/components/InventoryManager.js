@@ -4,6 +4,43 @@ import axios from 'axios';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Application Configuration (ezt majd localStorage-ből töltjük)
+const getAppConfig = () => {
+  const savedConfig = localStorage.getItem('inventoryConfig');
+  return savedConfig ? JSON.parse(savedConfig) : {
+    appName: "Turbó Szerviz Raktár",
+    logoUrl: "",
+    labels: {
+      parts: "Alkatrészek",
+      partTypes: "Alkatrésztípusok", 
+      suppliers: "Beszállítók",
+      stock: "Készlet",
+      search: "Keresés",
+      add: "Hozzáadás",
+      edit: "Szerkesztés",
+      delete: "Törlés",
+      settings: "Beállítások",
+      code: "Kód",
+      type: "Típus",
+      supplier: "Beszállító",
+      notes: "Jegyzet",
+      quantity: "Mennyiség",
+      operations: "Műveletek",
+      stockIn: "Beraktározás",
+      stockOut: "Kiadás",
+      newPart: "Új alkatrész hozzáadása",
+      management: "kezelése",
+      backToMain: "Vissza a főoldalra",
+      cancel: "Mégsem",
+      save: "Mentés"
+    }
+  };
+};
+
+const saveAppConfig = (config) => {
+  localStorage.setItem('inventoryConfig', JSON.stringify(config));
+};
+
 const InventoryManager = () => {
   const [items, setItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
