@@ -754,6 +754,52 @@ const AdminPanel = () => {
             )}
           </div>
         </div>
+
+        {/* PIN Change Modal */}
+        {showPasswordChange && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md">
+              <h3 className="text-lg font-semibold mb-4">🔑 PIN kód megváltoztatása</h3>
+              
+              <form onSubmit={handlePasswordChange}>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Új PIN kód (4 számjegy)
+                  </label>
+                  <input
+                    type="password"
+                    maxLength="4"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value.replace(/\D/g, ''))}
+                    className="w-full p-4 text-2xl text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 tracking-widest font-mono"
+                    placeholder="••••"
+                    autoFocus
+                  />
+                </div>
+                
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowPasswordChange(false);
+                      setNewPassword('');
+                    }}
+                    className="px-4 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-50"
+                  >
+                    Mégsem
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={newPassword.length !== 4}
+                    className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  >
+                    🔑 PIN mentése
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
