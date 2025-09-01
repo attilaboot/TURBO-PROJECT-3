@@ -310,6 +310,18 @@ const AdminPanel = () => {
                 </div>
               )}
               <button
+                onClick={() => setShowPasswordChange(true)}
+                className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 font-medium text-sm"
+              >
+                🔑 PIN változtatás
+              </button>
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 font-medium text-sm"
+              >
+                🚪 Kijelentkezés
+              </button>
+              <button
                 onClick={() => window.location.href = '/'}
                 className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 font-medium"
               >
