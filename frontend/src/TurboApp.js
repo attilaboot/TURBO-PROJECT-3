@@ -4,7 +4,7 @@ import axios from "axios";
 import "./App.css";
 import WorksheetEditor from "./components/WorksheetEditor";
 import AdminPanel from "./components/AdminPanel";
-import InventoryManager from "./components/InventoryManager";
+import TurboInventoryManager from "./components/TurboInventoryManager";
 import InventorySettings from "./components/InventorySettings";
 import MainPage from "./components/MainPage";
 
