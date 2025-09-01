@@ -48,6 +48,12 @@ const WorksheetEditor = () => {
     alert('Munkalap konfiguráció mentve!');
   };
 
+  const loadTemplate = (templateConfig) => {
+    setConfig(templateConfig);
+    setActiveTab('editor');
+    alert('Sablon betöltve! A konfigurációt most szerkesztheti.');
+  };
+
   const addSection = () => {
     const newSection = {
       id: `section_${Date.now()}`,
