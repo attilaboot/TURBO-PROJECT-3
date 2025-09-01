@@ -3008,8 +3008,8 @@ const NewWorkOrder = () => {
                         disabled={!workOrderData.car_make}
                       />
                       <datalist id="car-models-list">
-                        {filteredCarModels.map(model => (
-                          <option key={model.id} value={model.name} />
+                        {filteredCarModels.map((model, index) => (
+                          <option key={index} value={model.name} />
                         ))}
                       </datalist>
                       {!workOrderData.car_make && (
