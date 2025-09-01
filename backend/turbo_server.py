@@ -1369,6 +1369,120 @@ async def get_work_order_print_data(work_order_id: str):
     }
 
 
+# Template Management endpoints
+class WorksheetTemplate(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    description: Optional[str] = ""
+    category: str = "custom"
+    config: dict
+    created_by: str = "System"
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    is_public: bool = False
+
+class WorksheetTemplateCreate(BaseModel):
+    name: str
+    description: Optional[str] = ""
+    category: str = "custom"
+    config: dict
+    is_public: bool = False
+
+@api_router.post("/worksheet-templates", response_model=WorksheetTemplate)
+async def create_worksheet_template(template: WorksheetTemplateCreate):
+    """Create a new worksheet template"""
+    template_obj = WorksheetTemplate(**template.dict())
+    await db.worksheet_templates.insert_one(template_obj.dict())
+    return template_obj
+
+@api_router.get("/worksheet-templates", response_model=List[WorksheetTemplate])
+async def get_worksheet_templates(category: Optional[str] = None, public_only: bool = False):
+    """Get all worksheet templates"""
+    query = {}
+    if category:
+        query["category"] = category
+    if public_only:
+        query["is_public"] = True
+    
+    templates = await db.worksheet_templates.find(query).sort("created_at", -1).to_list(1000)
+    return [WorksheetTemplate(**template) for template in templates]
+
+@api_router.get("/worksheet-templates/{template_id}", response_model=WorksheetTemplate)
+async def get_worksheet_template(template_id: str):
+    """Get specific worksheet template"""
+    template = await db.worksheet_templates.find_one({"id": template_id})
+    if not template:
+        raise HTTPException(status_code=404, detail="Sablon nem található")
+    return WorksheetTemplate(**template)
+
+@api_router.put("/worksheet-templates/{template_id}", response_model=WorksheetTemplate)
+async def update_worksheet_template(template_id: str, template_update: WorksheetTemplateCreate):
+    """Update worksheet template"""
+    existing = await db.worksheet_templates.find_one({"id": template_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Sablon nem található")
+    
+    update_data = template_update.dict()
+    update_data["updated_at"] = datetime.utcnow()
+    
+    await db.worksheet_templates.update_one(
+        {"id": template_id}, 
+        {"$set": update_data}
+    )
+    
+    updated = await db.worksheet_templates.find_one({"id": template_id})
+    return WorksheetTemplate(**updated)
+
+@api_router.delete("/worksheet-templates/{template_id}")
+async def delete_worksheet_template(template_id: str):
+    """Delete worksheet template"""
+    result = await db.worksheet_templates.delete_one({"id": template_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Sablon nem található")
+    return {"message": "Sablon törölve"}
+
+@api_router.post("/worksheet-templates/{template_id}/export")
+async def export_worksheet_template(template_id: str):
+    """Export worksheet template as JSON"""
+    from fastapi.responses import JSONResponse
+    
+    template = await db.worksheet_templates.find_one({"id": template_id})
+    if not template:
+        raise HTTPException(status_code=404, detail="Sablon nem található")
+    
+    export_data = {
+        "name": template["name"],
+        "description": template["description"],
+        "category": template["category"],
+        "config": template["config"],
+        "exported_at": datetime.utcnow().isoformat(),
+        "version": "1.0"
+    }
+    
+    return JSONResponse(
+        content=export_data,
+        headers={"Content-Disposition": f"attachment; filename={template['name'].replace(' ', '_')}_template.json"}
+    )
+
+@api_router.post("/worksheet-templates/import")
+async def import_worksheet_template(template_data: dict):
+    """Import worksheet template from JSON"""
+    try:
+        new_template = WorksheetTemplate(
+            name=template_data.get("name", "Importált sablon"),
+            description=template_data.get("description", "Importálva külső forrásból"),
+            category="imported",
+            config=template_data["config"],
+            created_by="Import"
+        )
+        
+        await db.worksheet_templates.insert_one(new_template.dict())
+        return new_template
+    except KeyError as e:
+        raise HTTPException(status_code=400, detail=f"Hiányzó mező: {e}")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Hibás sablon formátum")
+
+
 # Include router
 app.include_router(api_router)
 
