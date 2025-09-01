@@ -1184,6 +1184,23 @@ async def generate_work_order_html(work_order_id: str):
     <body>
         <button onclick="window.print()" class="print-btn no-print">🖨️ Nyomtatás</button>
         
+        <!-- Work Number Display (Top Left) -->
+        <div style="position: absolute; top: 20px; left: 20px; z-index: 100;">
+            <div style="
+                background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+                color: white;
+                padding: 12px 16px;
+                border-radius: 8px;
+                font-weight: bold;
+                font-family: monospace;
+                font-size: 16px;
+                border: 2px solid #1E40AF;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            ">
+                MUNKA-#{{ work_order.work_number }}
+            </div>
+        </div>
+
         <div class="header">
             <div class="company-info">
                 <h1>🔧 TURBÓ SZERVIZ</h1>
