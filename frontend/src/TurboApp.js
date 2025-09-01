@@ -2826,9 +2826,9 @@ const NewWorkOrder = () => {
             <p className="text-gray-600">Turbó javítási munkalap létrehozása</p>
           </div>
           <div className="flex items-center gap-4">
-            {/* Munkalap száma megjelenítése */}
-            <div className="bg-blue-500 text-white px-4 py-2 rounded-lg font-bold text-lg border-2 border-blue-700 shadow-md">
-              MUNKA-#{Math.floor(Math.random() * 90000 + 10000)}
+            {/* Munkalap száma (következő sorszám előnézet) */}
+            <div className="bg-green-500 text-white px-4 py-2 rounded-lg font-bold text-lg border-2 border-green-700 shadow-md">
+              MUNKA-#{(workOrders.length + 1).toString().padStart(5, '0')}
             </div>
             <Link to="/" className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 font-medium">
               🏠 Vissza
