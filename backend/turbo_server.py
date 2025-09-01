@@ -758,28 +758,6 @@ async def update_work_order(work_order_id: str, work_order_update: WorkOrderUpda
     updated = await db.work_orders.find_one({"id": work_order_id})
     return WorkOrder(**updated)
 
-# Helper function to recalculate sequence numbers
-async def recalculate_sequence_numbers():
-    """Recalculate sequence numbers for all work orders"""
-    # Get all work orders sorted by creation date
-    work_orders = await db.work_orders.find().sort("created_at", 1).to_list(None)
-    
-    # Update sequence numbers
-    for index, work_order in enumerate(work_orders, 1):
-        new_sequence = index
-        new_work_number = f"{new_sequence:05d}"  # 00001, 00002, etc.
-        
-        await db.work_orders.update_one(
-            {"id": work_order["id"]},
-            {
-                "$set": {
-                    "work_sequence": new_sequence,
-                    "work_number": new_work_number,
-                    "updated_at": datetime.utcnow()
-                }
-            }
-        )
-
 @api_router.delete("/work-orders/{work_order_id}")
 async def delete_work_order(work_order_id: str):
     """Delete work order (only if not finalized)"""
