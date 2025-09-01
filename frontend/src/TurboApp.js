@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-do
 import axios from "axios";
 import "./App.css";
 import WorksheetEditor from "./components/WorksheetEditor";
+import AdminPanel from "./components/AdminPanel";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
