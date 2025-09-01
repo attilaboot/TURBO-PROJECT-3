@@ -5,7 +5,7 @@ import "./App.css";
 import WorksheetEditor from "./components/WorksheetEditor";
 import AdminPanel from "./components/AdminPanel";
 import TurboInventoryManager from "./components/TurboInventoryManager";
-import InventorySettings from "./components/InventorySettings";
+import TurboInventorySettings from "./components/TurboInventorySettings";
 import MainPage from "./components/MainPage";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
