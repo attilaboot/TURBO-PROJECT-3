@@ -347,7 +347,7 @@ const Dashboard = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <span className="font-bold">{order.total_amount.toFixed(0)}€</span>
+                      <span className="font-bold">{order.total_amount.toFixed(0)} LEI</span>
                     </td>
                   </tr>
                 ))}
