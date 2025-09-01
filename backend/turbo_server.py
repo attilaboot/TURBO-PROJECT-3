@@ -2282,6 +2282,34 @@ async def get_stock_movements(part_id: str):
     movements = await db.stock_movements.find({"part_id": part_id}).sort("created_at", -1).to_list(1000)
     return [StockMovement(**m) for m in movements]
 
+# Inicializáló adatok betöltése (GitHub style)
+@api_router.post("/initialize-data")
+async def initialize_data():
+    # Alkatrésztípusok inicializálása
+    part_types = [
+        "Ansamblu central (CHRA)",
+        "Geometria",
+        "Set garnitura", 
+        "Nozle Ring Cage"
+    ]
+    
+    for pt_name in part_types:
+        existing = await db.part_types.find_one({"name": pt_name})
+        if not existing:
+            pt_obj = PartType(name=pt_name)
+            await db.part_types.insert_one(pt_obj.dict())
+    
+    # Beszállítók inicializálása
+    suppliers = ["Melett", "Vallion", "Cer"]
+    
+    for s_name in suppliers:
+        existing = await db.suppliers.find_one({"name": s_name})
+        if not existing:
+            s_obj = Supplier(name=s_name)
+            await db.suppliers.insert_one(s_obj.dict())
+    
+    return {"message": "Alapadatok inicializálva"}
+
 
 
 @api_router.post("/inventory/initialize-default-items")
