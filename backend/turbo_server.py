@@ -944,8 +944,20 @@ async def generate_work_order_pdf(work_order_id: str):
                 font-family: 'Courier New', monospace;
                 font-size: 14px;
                 border: 2px solid #1E40AF;
+                margin-bottom: 4px;
             ">
                 MUNKA-#{{ work_order.work_number }}
+            </div>
+            <div style="
+                background: #10B981;
+                color: white;
+                padding: 6px 10px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: bold;
+                border: 2px solid #047857;
+            ">
+                📅 {{ work_order.created_at.strftime('%Y.%m.%d') }}
             </div>
         </div>
 
