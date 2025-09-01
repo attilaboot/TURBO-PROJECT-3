@@ -9,6 +9,10 @@ const AdminPanel = () => {
   const [systemStats, setSystemStats] = useState({});
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [pinCode, setPinCode] = useState('');
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
   const [globalSettings, setGlobalSettings] = useState({
     companyName: 'Turbó Szerviz Kft.',
     companyAddress: '',
