@@ -279,6 +279,7 @@ class WorkOrderCreate(BaseModel):
     general_notes: str = ""
 
 class WorkOrderUpdate(BaseModel):
+    work_sequence: Optional[int] = None
     turbo_code: Optional[str] = None
     car_make: Optional[str] = None
     car_model: Optional[str] = None
@@ -293,11 +294,13 @@ class WorkOrderUpdate(BaseModel):
     reconditioning_price: Optional[float] = None
     turbo_price: Optional[float] = None
     status: Optional[WorkStatus] = None
+    is_finalized: Optional[bool] = None
     quote_sent: Optional[bool] = None
     quote_accepted: Optional[bool] = None
     estimated_completion: Optional[date] = None
     finalized: Optional[bool] = None
     client_notified: Optional[bool] = None
+    finalized_at: Optional[datetime] = None
 
 
 class WorkOrderWithDetails(BaseModel):
