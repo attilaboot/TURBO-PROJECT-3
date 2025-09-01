@@ -1402,6 +1402,91 @@ async def get_work_order_print_data(work_order_id: str):
     }
 
 
+# Inventory Management Models
+class InventoryItem(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str                          # pl. "Geometria"
+    code: str                          # pl. "GEO-001" 
+    category: str = "general"          # pl. "turbo_parts", "tools", "consumables"
+    current_stock: int = 0             # Jelenlegi készlet
+    min_stock: int = 0                 # Minimum készlet (riasztáshoz)
+    max_stock: int = 1000              # Maximum készlet
+    unit: str = "db"                   # Mértékegység
+    location: Optional[str] = ""       # Raktári helyszín
+    supplier: Optional[str] = ""       # Szállító
+    purchase_price: float = 0.0        # Beszerzési ár
+    notes: Optional[str] = ""          # Megjegyzések
+    active: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class InventoryItemCreate(BaseModel):
+    name: str
+    code: str
+    category: str = "general"
+    current_stock: int = 0
+    min_stock: int = 0
+    max_stock: int = 1000
+    unit: str = "db"
+    location: Optional[str] = ""
+    supplier: Optional[str] = ""
+    purchase_price: float = 0.0
+    notes: Optional[str] = ""
+
+class InventoryItemUpdate(BaseModel):
+    name: Optional[str] = None
+    code: Optional[str] = None
+    category: Optional[str] = None
+    min_stock: Optional[int] = None
+    max_stock: Optional[int] = None
+    unit: Optional[str] = None
+    location: Optional[str] = None
+    supplier: Optional[str] = None
+    purchase_price: Optional[float] = None
+    notes: Optional[str] = None
+
+class InventoryMovement(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    item_id: str                       # Hivatkozás InventoryItem-re
+    movement_type: str                 # "IN", "OUT", "ADJUSTMENT"
+    quantity: int                      # +/- mennyiség
+    reason: str                        # "purchase", "usage", "correction", "damaged"
+    reference: Optional[str] = ""      # Hivatkozás (pl. work_order_id, invoice_number)
+    notes: Optional[str] = ""          # Mozgás megjegyzése
+    created_by: str = "System"
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    # Készlet snapshot
+    stock_before: int = 0              # Készlet mozgás előtt
+    stock_after: int = 0               # Készlet mozgás után
+
+class InventoryMovementCreate(BaseModel):
+    item_id: str
+    movement_type: str  # "IN", "OUT", "ADJUSTMENT"
+    quantity: int
+    reason: str
+    reference: Optional[str] = ""
+    notes: Optional[str] = ""
+
+class InventoryItemWithStock(BaseModel):
+    id: str
+    name: str
+    code: str
+    category: str
+    current_stock: int
+    min_stock: int
+    max_stock: int
+    unit: str
+    location: Optional[str]
+    supplier: Optional[str]
+    purchase_price: float
+    notes: Optional[str]
+    active: bool
+    stock_status: str                  # "ok", "low", "critical", "overstock"
+    last_movement: Optional[datetime] = None
+    total_movements: int = 0
+
+
 # Template Management endpoints
 class WorksheetTemplate(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
