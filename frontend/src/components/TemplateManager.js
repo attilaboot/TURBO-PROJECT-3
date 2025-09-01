@@ -39,6 +39,18 @@ const TemplateManager = ({ onLoadTemplate, currentConfig }) => {
         createdAt: new Date().toISOString(),
         config: {
           title: "Alapvető Turbó Munkalap",
+          workNumberDisplay: {
+            show: true,
+            position: "top-left",
+            format: "MUNKA-#{number}",
+            backgroundColor: "#10B981",
+            textColor: "#FFFFFF",
+            fontSize: "14",
+            padding: "10",
+            borderRadius: "6",
+            borderWidth: "2",
+            borderColor: "#059669"
+          },
           sections: [
             {
               id: "client_basic",
