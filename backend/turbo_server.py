@@ -797,6 +797,22 @@ async def generate_work_order_pdf(work_order_id: str):
         </style>
     </head>
     <body>
+        <!-- Work Number Box (Top Left) -->
+        <div style="position: absolute; top: 10mm; left: 10mm; z-index: 100;">
+            <div style="
+                background: #3B82F6;
+                color: white;
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-weight: bold;
+                font-family: 'Courier New', monospace;
+                font-size: 14px;
+                border: 2px solid #1E40AF;
+            ">
+                MUNKA-#{{ work_order.work_number }}
+            </div>
+        </div>
+
         <div class="header">
             <div class="company-info">
                 <h1>🔧 TURBÓ SZERVIZ</h1>
