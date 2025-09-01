@@ -196,12 +196,20 @@ const Dashboard = () => {
                 </p>
               </div>
             </div>
-            <Link 
-              to="/settings" 
-              className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 font-medium flex items-center gap-2"
-            >
-              ⚙️ SETTINGS
-            </Link>
+            <div className="flex gap-2">
+              <Link 
+                to="/admin" 
+                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 font-medium flex items-center gap-2"
+              >
+                🛡️ ADMIN
+              </Link>
+              <Link 
+                to="/settings" 
+                className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 font-medium flex items-center gap-2"
+              >
+                ⚙️ SETTINGS
+              </Link>
+            </div>
           </div>
         </header>
 
