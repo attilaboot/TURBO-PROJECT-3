@@ -4202,6 +4202,7 @@ function TurboApp() {
         <Route path="/new-work-order" element={<NewWorkOrder />} />
         <Route path="/parts" element={<Parts />} />
         <Route path="/inventory" element={<InventoryManager />} />
+        <Route path="/inventory" element={<InventoryManager />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
