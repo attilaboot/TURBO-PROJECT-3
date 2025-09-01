@@ -3982,6 +3982,12 @@ const WorkOrderDetail = () => {
                 🖨️ HTML Nyomtatás
               </button>
               <button
+                onClick={() => window.open(`${API}/work-orders/${workOrder.id}/html`, '_blank')}
+                className="bg-green-500 text-white px-6 py-3 rounded hover:bg-green-600 font-medium flex items-center gap-2"
+              >
+                🌐 HTML Nyomtatás
+              </button>
+              <button
                 onClick={handlePrintPDF}
                 className="bg-red-500 text-white px-6 py-3 rounded hover:bg-red-600 font-medium flex items-center gap-2"
               >
