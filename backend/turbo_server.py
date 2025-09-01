@@ -27,6 +27,7 @@ api_router = APIRouter(prefix="/api")
 
 # Enums
 class WorkStatus(str, Enum):
+    DRAFT = "DRAFT"                 # Piszkozat
     RECEIVED = "RECEIVED"           # Beérkezett
     IN_PROGRESS = "IN_PROGRESS"     # Vizsgálat alatt
     QUOTED = "QUOTED"               # Árajánlat készült
@@ -35,6 +36,7 @@ class WorkStatus(str, Enum):
     WORKING = "WORKING"             # Javítás alatt
     READY = "READY"                 # Kész
     DELIVERED = "DELIVERED"         # Átvett
+    FINALIZED = "FINALIZED"         # Véglegesítve
 
 class DocumentType(str, Enum):
     IPOS = "IPOS"
