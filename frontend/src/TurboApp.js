@@ -1072,6 +1072,11 @@ const Settings = () => {
               </div>
             )}
 
+            {/* Worksheet Editor Tab */}
+            {activeTab === 'worksheet' && (
+              <WorksheetEditor />
+            )}
+
             {/* Logo & Design Tab */}
             {activeTab === 'branding' && (
               <div>
