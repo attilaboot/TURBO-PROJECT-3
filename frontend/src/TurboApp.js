@@ -2535,6 +2535,15 @@ const NewWorkOrder = () => {
     }
   };
 
+  const loadWorkOrders = async () => {
+    try {
+      const response = await axios.get(`${API}/work-orders`);
+      setWorkOrders(response.data);
+    } catch (error) {
+      console.error('Hiba munkalapok betöltésekor:', error);
+    }
+  };
+
   const handleCarMakeSelect = (selectedMake) => {
     if (selectedMake && selectedMake !== 'OTHER') {
       // Find models from carMakes JSON data
