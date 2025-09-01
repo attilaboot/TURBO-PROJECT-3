@@ -1352,8 +1352,20 @@ async def generate_work_order_html(work_order_id: str):
                 font-size: 16px;
                 border: 2px solid #1E40AF;
                 box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                margin-bottom: 8px;
             ">
                 MUNKA-#{{ work_order.work_number }}
+            </div>
+            <div style="
+                background: linear-gradient(135deg, #10B981, #059669);
+                color: white;
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: bold;
+                border: 2px solid #047857;
+            ">
+                📅 {{ work_order.created_at.strftime('%Y.%m.%d') }}
             </div>
         </div>
 
