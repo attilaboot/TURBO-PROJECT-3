@@ -269,7 +269,32 @@ const DynamicWorksheet = ({ workOrderId = null, onSave, onCancel }) => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <div className="bg-white rounded-lg shadow-lg">
+      <div className="bg-white rounded-lg shadow-lg relative">
+        {/* Work Number Display */}
+        {config.workNumberDisplay?.show && formData.work_number && (
+          <div 
+            className={`absolute z-10 ${
+              config.workNumberDisplay.position === 'top-left' ? 'top-4 left-4' :
+              config.workNumberDisplay.position === 'top-right' ? 'top-4 right-4' :
+              config.workNumberDisplay.position === 'bottom-left' ? 'bottom-4 left-4' :
+              'bottom-4 right-4'
+            }`}
+            style={{
+              backgroundColor: config.workNumberDisplay.backgroundColor || '#3B82F6',
+              color: config.workNumberDisplay.textColor || '#FFFFFF',
+              fontSize: `${config.workNumberDisplay.fontSize || 16}px`,
+              padding: `${config.workNumberDisplay.padding || 12}px`,
+              borderRadius: `${config.workNumberDisplay.borderRadius || 8}px`,
+              border: `${config.workNumberDisplay.borderWidth || 2}px solid ${config.workNumberDisplay.borderColor || '#1E40AF'}`,
+              fontWeight: 'bold',
+              fontFamily: 'monospace',
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+            }}
+          >
+            {config.workNumberDisplay.format?.replace('{number}', formData.work_number) || `#${formData.work_number}`}
+          </div>
+        )}
+        
         <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-6 rounded-t-lg">
           <h1 className="text-2xl font-bold">{config.title}</h1>
           <p className="text-blue-100 mt-1">
