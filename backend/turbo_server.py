@@ -338,22 +338,15 @@ async def generate_work_number() -> str:
     
     return str(next_num)
 
-# Helper function to get next sequence number
-async def get_next_sequence_number() -> int:
-    """Get next sequence number for work orders"""
-    # Find the highest work_sequence number
-    pipeline = [
-        {"$match": {"work_sequence": {"$exists": True, "$ne": None}}},
-        {"$sort": {"work_sequence": -1}},
-        {"$limit": 1}
-    ]
-    
-    result = await db.work_orders.aggregate(pipeline).to_list(1)
+async def get_next_sequence_number():
+    """Get next sequence number (starting from 1)"""
+    # Find the highest existing sequence number
+    result = await db.work_orders.find().sort("work_sequence", -1).limit(1).to_list(1)
     
     if result:
-        next_sequence = result[0]["work_sequence"] + 1
+        next_sequence = result[0].get("work_sequence", 0) + 1
     else:
-        next_sequence = 1  # Starting sequence number
+        next_sequence = 1  # Starting from 1
     
     return next_sequence
 
