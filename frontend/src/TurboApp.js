@@ -4383,7 +4383,8 @@ function TurboApp() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<DashboardMain />} />
+        <Route path="/workspace" element={<MainPage />} />
         <Route path="/main" element={<MainPage />} />
         <Route path="/clients" element={<Clients />} />
         <Route path="/work-orders" element={<WorkOrders />} />
