@@ -1098,7 +1098,7 @@ const Settings = () => {
 
             {/* Inventory Settings Tab */}
             {activeTab === 'inventory' && (
-              <InventorySettings />
+              <TurboInventorySettings />
             )}
 
             {/* Worksheet Editor Tab */}
