@@ -2535,11 +2535,81 @@ const NewWorkOrder = () => {
 
   const handleCarMakeSelect = (selectedMake) => {
     if (selectedMake && selectedMake !== 'OTHER') {
-      // Filter models by selected make
-      const filtered = carModels.filter(model => 
-        model.make_name === selectedMake
-      );
-      setFilteredCarModels(filtered);
+      // Find models from carMakes JSON data
+      const carMakesData = [
+        {
+          "id": "bmw",
+          "name": "BMW",
+          "models": ["X1", "X3", "X5", "X6", "1 Series", "3 Series", "5 Series", "7 Series", "Z4"]
+        },
+        {
+          "id": "mercedes",
+          "name": "Mercedes-Benz", 
+          "models": ["A-Class", "B-Class", "C-Class", "E-Class", "S-Class", "GLA", "GLC", "GLE", "GLS"]
+        },
+        {
+          "id": "audi",
+          "name": "Audi",
+          "models": ["A1", "A3", "A4", "A6", "A8", "Q3", "Q5", "Q7", "TT"]
+        },
+        {
+          "id": "volkswagen", 
+          "name": "Volkswagen",
+          "models": ["Golf", "Passat", "Polo", "Tiguan", "Touareg", "Arteon", "T-Cross"]
+        },
+        {
+          "id": "ford",
+          "name": "Ford",
+          "models": ["Fiesta", "Focus", "Mondeo", "Kuga", "Explorer", "Mustang", "Transit"]
+        },
+        {
+          "id": "peugeot",
+          "name": "Peugeot", 
+          "models": ["208", "308", "508", "2008", "3008", "5008", "Partner"]
+        },
+        {
+          "id": "renault",
+          "name": "Renault",
+          "models": ["Clio", "Megane", "Scenic", "Kadjar", "Koleos", "Captur", "Twingo"]
+        },
+        {
+          "id": "opel",
+          "name": "Opel",
+          "models": ["Corsa", "Astra", "Insignia", "Crossland", "Grandland", "Mokka"]
+        },
+        {
+          "id": "citroen",
+          "name": "Citroën",
+          "models": ["C1", "C3", "C4", "C5", "C3 Aircross", "C5 Aircross", "Berlingo"]
+        },
+        {
+          "id": "skoda",
+          "name": "Škoda", 
+          "models": ["Fabia", "Octavia", "Superb", "Kamiq", "Karoq", "Kodiaq"]
+        },
+        {
+          "id": "toyota",
+          "name": "Toyota",
+          "models": ["Yaris", "Corolla", "Camry", "RAV4", "Highlander", "Prius", "Aygo"]
+        },
+        {
+          "id": "nissan",
+          "name": "Nissan", 
+          "models": ["Micra", "Qashqai", "X-Trail", "Juke", "Leaf", "Navara"]
+        }
+      ];
+      
+      const selectedMakeData = carMakesData.find(make => make.name === selectedMake);
+      if (selectedMakeData) {
+        // Convert models to the expected format
+        const modelsForSelectedMake = selectedMakeData.models.map(model => ({
+          make_name: selectedMake,
+          name: model
+        }));
+        setFilteredCarModels(modelsForSelectedMake);
+      } else {
+        setFilteredCarModels([]);
+      }
     } else {
       setFilteredCarModels([]);
     }
