@@ -25,7 +25,12 @@ const AdminPanel = () => {
   });
 
   useEffect(() => {
-    loadSystemData();
+    // Check if already authenticated in this session
+    const sessionAuth = sessionStorage.getItem('adminAuthenticated');
+    if (sessionAuth === 'true') {
+      setIsAuthenticated(true);
+      loadSystemData();
+    }
   }, []);
 
   const loadSystemData = async () => {
