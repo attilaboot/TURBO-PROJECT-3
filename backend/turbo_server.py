@@ -1382,6 +1382,10 @@ async def generate_work_order_html(work_order_id: str):
         'DELIVERED': 'Átvett'
     }
     
+    # Add new status translations
+    status_translations['DRAFT'] = 'Piszkozat'
+    status_translations['FINALIZED'] = 'Véglegesítve'
+    
     # Calculate total amount
     total_amount = work_order.get("cleaning_price", 0) + work_order.get("reconditioning_price", 0) + work_order.get("turbo_price", 0)
     
