@@ -222,6 +222,7 @@ class VehicleCreate(BaseModel):
 class WorkOrder(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     work_number: str                # NR (43005)
+    work_sequence: int = 0          # Sorszám (1, 2, 3, ...)
     client_id: str
     vehicle_id: Optional[str] = None
     turbo_code: str                 # 5490-970-0071
@@ -251,6 +252,7 @@ class WorkOrder(BaseModel):
     
     # Workflow
     status: WorkStatus = WorkStatus.RECEIVED
+    is_finalized: bool = False      # Véglegesítve van-e
     quote_sent: bool = False        # OFERTAT
     quote_accepted: bool = False    # ACCEPT
     estimated_completion: Optional[date] = None # TERMEN ESTIMATIV
@@ -263,6 +265,7 @@ class WorkOrder(BaseModel):
     # Timestamps
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
+    finalized_at: Optional[datetime] = None
 
 class WorkOrderCreate(BaseModel):
     client_id: str
