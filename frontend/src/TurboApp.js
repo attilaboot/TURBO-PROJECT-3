@@ -2276,7 +2276,7 @@ const WorkOrders = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-bold text-green-600">
-                        {order.total_amount.toFixed(0)}€
+                        {order.total_amount.toFixed(0)} LEI
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
