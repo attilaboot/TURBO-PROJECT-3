@@ -987,6 +987,12 @@ const Settings = () => {
               🚨 Figyelmeztetések
             </button>
             <button
+              onClick={() => setActiveTab('worksheet')}
+              className={`px-6 py-4 font-medium whitespace-nowrap ${activeTab === 'worksheet' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              📋 Munkalap szerkesztő
+            </button>
+            <button
               onClick={() => setActiveTab('parts')}
               className={`px-6 py-4 font-medium whitespace-nowrap ${activeTab === 'parts' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
             >
