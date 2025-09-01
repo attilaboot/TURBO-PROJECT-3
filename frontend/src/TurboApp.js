@@ -87,6 +87,7 @@ const saveAppConfig = (config) => {
 
 // Status translations
 const statusTranslations = {
+  'DRAFT': 'Vázlat',
   'RECEIVED': 'Beérkezett',
   'IN_PROGRESS': 'Vizsgálat alatt', 
   'QUOTED': 'Árajánlat készült',
@@ -94,7 +95,8 @@ const statusTranslations = {
   'REJECTED': 'Elutasítva',
   'WORKING': 'Javítás alatt',
   'READY': 'Kész',
-  'DELIVERED': 'Átvett'
+  'DELIVERED': 'Átvett',
+  'FINALIZED': 'Véglegesítve'
 };
 
 const statusColors = {
