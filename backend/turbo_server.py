@@ -564,17 +564,21 @@ async def get_vehicles(client_id: Optional[str] = None):
 # Work Orders endpoints
 @api_router.post("/work-orders", response_model=WorkOrder)
 async def create_work_order(work_order: WorkOrderCreate):
-    client = await db.clients.find_one({"id": work_order.client_id})
-    if not client:
-        raise HTTPException(status_code=400, detail="Ügyfél nem található")
+    """Create a new work order"""
+    # Get next sequence number
+    next_sequence = await get_next_sequence_number()
     
-    work_number = await generate_work_number()
+    # Generate work number based on sequence
+    work_number = f"{next_sequence:05d}"  # 00001, 00002, stb.
     
     work_order_obj = WorkOrder(
+        **work_order.dict(), 
         work_number=work_number,
-        **work_order.dict()
+        work_sequence=next_sequence,
+        status=WorkStatus.DRAFT
     )
     await db.work_orders.insert_one(work_order_obj.dict())
+    
     return work_order_obj
 
 @api_router.get("/work-orders", response_model=List[WorkOrderWithDetails])
