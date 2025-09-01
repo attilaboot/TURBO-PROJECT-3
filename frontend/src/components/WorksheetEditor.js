@@ -199,6 +199,12 @@ const WorksheetEditor = () => {
         </div>
         <div className="flex gap-2">
           <button
+            onClick={() => setActiveTab(activeTab === 'templates' ? 'editor' : 'templates')}
+            className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 text-sm"
+          >
+            📚 {activeTab === 'templates' ? 'Szerkesztő' : 'Sablonok'}
+          </button>
+          <button
             onClick={addSection}
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 text-sm"
           >
@@ -212,6 +218,16 @@ const WorksheetEditor = () => {
           </button>
         </div>
       </div>
+
+      {/* Tab Content */}
+      {activeTab === 'templates' && (
+        <TemplateManager 
+          onLoadTemplate={loadTemplate}
+          currentConfig={config}
+        />
+      )}
+
+      {activeTab === 'editor' && (
 
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="mb-4">
