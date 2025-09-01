@@ -1003,6 +1003,355 @@ async def generate_work_order_pdf(work_order_id: str):
         headers={"Content-Disposition": f"attachment; filename=munkalap_{work_order['work_number']}.pdf"}
     )
 
+@api_router.get("/work-orders/{work_order_id}/html")
+async def generate_work_order_html(work_order_id: str):
+    """Generate HTML print version of work order"""
+    from jinja2 import Template
+    from fastapi.responses import HTMLResponse
+    
+    # Get work order with client details
+    work_order = await db.work_orders.find_one({"id": work_order_id})
+    if not work_order:
+        raise HTTPException(status_code=404, detail="Munkalap nem található")
+    
+    client = await db.clients.find_one({"id": work_order["client_id"]})
+    if not client:
+        raise HTTPException(status_code=404, detail="Ügyfél nem található")
+    
+    # HTML Template for work order
+    html_template = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Munkalap #{{ work_order.work_number }}</title>
+        <style>
+            @media print {
+                @page { margin: 20mm; }
+                body { margin: 0; }
+                .no-print { display: none !important; }
+            }
+            body { 
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                margin: 20px; 
+                line-height: 1.6; 
+                color: #333;
+            }
+            .header { 
+                text-align: center; 
+                border-bottom: 3px solid #3B82F6; 
+                padding-bottom: 20px; 
+                margin-bottom: 30px; 
+            }
+            .company-info { 
+                text-align: center; 
+                margin-bottom: 20px; 
+            }
+            .company-info h1 { 
+                color: #3B82F6; 
+                margin: 0; 
+                font-size: 2.5em; 
+            }
+            .work-number { 
+                font-size: 28px; 
+                font-weight: bold; 
+                color: #1F2937; 
+                margin: 15px 0; 
+            }
+            .section { 
+                margin-bottom: 25px; 
+                background: #F9FAFB; 
+                border-radius: 8px; 
+                padding: 20px; 
+            }
+            .section h3 { 
+                background: linear-gradient(135deg, #3B82F6, #1D4ED8); 
+                color: white; 
+                padding: 10px 15px; 
+                margin: -20px -20px 15px -20px; 
+                border-radius: 8px 8px 0 0; 
+                font-size: 1.1em;
+            }
+            .grid { 
+                display: grid; 
+                grid-template-columns: 1fr 1fr; 
+                gap: 30px; 
+                margin-bottom: 20px; 
+            }
+            .column { 
+                background: white; 
+                padding: 20px; 
+                border-radius: 8px; 
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            }
+            .info-row { 
+                margin: 8px 0; 
+                display: flex; 
+                justify-content: space-between; 
+            }
+            .label { 
+                font-weight: 600; 
+                color: #374151; 
+                min-width: 120px; 
+            }
+            .value { 
+                color: #1F2937; 
+                font-weight: 500; 
+            }
+            .parts-table, .process-table { 
+                width: 100%; 
+                border-collapse: collapse; 
+                margin-top: 15px; 
+                background: white; 
+                border-radius: 8px; 
+                overflow: hidden; 
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            }
+            .parts-table th, .parts-table td, .process-table th, .process-table td { 
+                border: 1px solid #E5E7EB; 
+                padding: 12px; 
+                text-align: left; 
+            }
+            .parts-table th, .process-table th { 
+                background: #F3F4F6; 
+                font-weight: 600; 
+                color: #374151; 
+            }
+            .status { 
+                display: inline-block; 
+                font-weight: bold; 
+                padding: 8px 16px; 
+                border-radius: 20px; 
+                color: white; 
+                text-transform: uppercase; 
+                letter-spacing: 0.5px; 
+            }
+            .status.RECEIVED { background: linear-gradient(135deg, #3B82F6, #1D4ED8); }
+            .status.IN_PROGRESS { background: linear-gradient(135deg, #F59E0B, #D97706); }
+            .status.QUOTED { background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
+            .status.ACCEPTED { background: linear-gradient(135deg, #10B981, #059669); }
+            .status.WORKING { background: linear-gradient(135deg, #F97316, #EA580C); }
+            .status.READY { background: linear-gradient(135deg, #14B8A6, #0D9488); }
+            .status.DELIVERED { background: linear-gradient(135deg, #6B7280, #4B5563); }
+            .pricing { 
+                border: 2px solid #3B82F6; 
+                background: linear-gradient(135deg, #EBF4FF, #DBEAFE); 
+                padding: 20px; 
+                border-radius: 12px; 
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            }
+            .total { 
+                font-size: 1.4em; 
+                font-weight: bold; 
+                color: #1D4ED8; 
+                background: white; 
+                padding: 10px; 
+                border-radius: 6px; 
+                text-align: center; 
+                margin-top: 10px; 
+            }
+            .footer { 
+                text-align: center; 
+                margin-top: 40px; 
+                padding-top: 20px; 
+                border-top: 2px solid #E5E7EB; 
+                color: #6B7280; 
+                font-size: 0.9em; 
+            }
+            .print-btn {
+                background: #10B981;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 6px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                margin: 20px auto;
+                display: block;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .print-btn:hover {
+                background: #059669;
+            }
+            @media (max-width: 768px) {
+                .grid { grid-template-columns: 1fr; }
+                body { margin: 10px; }
+                .section { padding: 15px; }
+            }
+        </style>
+    </head>
+    <body>
+        <button onclick="window.print()" class="print-btn no-print">🖨️ Nyomtatás</button>
+        
+        <div class="header">
+            <div class="company-info">
+                <h1>🔧 TURBÓ SZERVIZ</h1>
+                <p style="color: #6B7280; font-size: 1.1em; margin: 5px 0;">Turbófeltöltő javítás és karbantartás</p>
+            </div>
+            <div class="work-number">MUNKALAP #{{ work_order.work_number }}</div>
+        </div>
+
+        <div class="grid">
+            <div class="column">
+                <div class="section">
+                    <h3>👤 Ügyfél adatok</h3>
+                    <div class="info-row">
+                        <span class="label">Név:</span>
+                        <span class="value">{{ client.name }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Telefon:</span>
+                        <span class="value">{{ client.phone }}</span>
+                    </div>
+                    {% if client.address %}
+                    <div class="info-row">
+                        <span class="label">Cím:</span>
+                        <span class="value">{{ client.address }}</span>
+                    </div>
+                    {% endif %}
+                    {% if client.company_name %}
+                    <div class="info-row">
+                        <span class="label">Cégnév:</span>
+                        <span class="value">{{ client.company_name }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="column">
+                <div class="section">
+                    <h3>🚗 Jármű adatok</h3>
+                    <div class="info-row">
+                        <span class="label">Márka:</span>
+                        <span class="value">{{ work_order.car_make }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Típus:</span>
+                        <span class="value">{{ work_order.car_model }}</span>
+                    </div>
+                    {% if work_order.car_year %}
+                    <div class="info-row">
+                        <span class="label">Évjárat:</span>
+                        <span class="value">{{ work_order.car_year }}</span>
+                    </div>
+                    {% endif %}
+                    {% if work_order.engine_code %}
+                    <div class="info-row">
+                        <span class="label">Motorkód:</span>
+                        <span class="value">{{ work_order.engine_code }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>🔧 Turbó információk</h3>
+            <div class="info-row">
+                <span class="label">Turbó kód:</span>
+                <span class="value" style="font-family: monospace; font-size: 1.1em; font-weight: bold;">{{ work_order.turbo_code }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Beérkezés dátuma:</span>
+                <span class="value">{{ work_order.received_date }}</span>
+            </div>
+            {% if work_order.general_notes %}
+            <div class="info-row">
+                <span class="label">Megjegyzések:</span>
+                <span class="value">{{ work_order.general_notes }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="grid">
+            <div class="column">
+                <div class="section">
+                    <h3>📊 Státusz információk</h3>
+                    <div style="text-align: center; margin: 15px 0;">
+                        <div class="status {{ work_order.status }}">{{ status_text }}</div>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Árajánlat küldve:</span>
+                        <span class="value">{{ "✅ Igen" if work_order.quote_sent else "❌ Nem" }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Árajánlat elfogadva:</span>
+                        <span class="value">{{ "✅ Igen" if work_order.quote_accepted else "❌ Nem" }}</span>
+                    </div>
+                    {% if work_order.estimated_completion %}
+                    <div class="info-row">
+                        <span class="label">Becsült készre kerülés:</span>
+                        <span class="value">{{ work_order.estimated_completion }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="column">
+                <div class="section pricing">
+                    <h3>💰 Árazás</h3>
+                    <div class="info-row">
+                        <span class="label">Tisztítás:</span>
+                        <span class="value">{{ "{:,.0f}".format(work_order.cleaning_price) }} LEI</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Felújítás:</span>
+                        <span class="value">{{ "{:,.0f}".format(work_order.reconditioning_price) }} LEI</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Turbó:</span>
+                        <span class="value">{{ "{:,.0f}".format(work_order.turbo_price) }} LEI</span>
+                    </div>
+                    <div class="total">
+                        Összesen: {{ "{:,.0f}".format(total_amount) }} LEI
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Munkalap generálva:</strong> {{ now.strftime("%Y-%m-%d %H:%M:%S") }}</p>
+            <p>🔧 <strong>Turbó Szerviz Kezelő Rendszer</strong></p>
+        </div>
+        
+        <script>
+            // Auto print dialog on page load if requested
+            if (window.location.search.includes('autoprint=true')) {
+                window.print();
+            }
+        </script>
+    </body>
+    </html>
+    """
+    
+    # Status translations
+    status_translations = {
+        'RECEIVED': 'Beérkezett',
+        'IN_PROGRESS': 'Vizsgálat alatt',
+        'QUOTED': 'Árajánlat készült',
+        'ACCEPTED': 'Elfogadva',
+        'REJECTED': 'Elutasítva',
+        'WORKING': 'Javítás alatt',
+        'READY': 'Kész',
+        'DELIVERED': 'Átvett'
+    }
+    
+    # Calculate total amount
+    total_amount = work_order.get("cleaning_price", 0) + work_order.get("reconditioning_price", 0) + work_order.get("turbo_price", 0)
+    
+    # Render template
+    template = Template(html_template)
+    html_content = template.render(
+        work_order=work_order,
+        client=client,
+        status_text=status_translations.get(work_order["status"], work_order["status"]),
+        total_amount=total_amount,
+        now=datetime.utcnow()
+    )
+    
+    return HTMLResponse(content=html_content)
+
 @api_router.get("/work-orders/{work_order_id}/print-data")
 async def get_work_order_print_data(work_order_id: str):
     """Get print data for work order"""
