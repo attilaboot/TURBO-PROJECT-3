@@ -230,16 +230,196 @@ const WorksheetEditor = () => {
       {activeTab === 'editor' && (
 
       <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Munkalap címe
-          </label>
-          <input
-            type="text"
-            value={config?.title || ''}
-            onChange={(e) => setConfig({...config, title: e.target.value})}
-            className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-          />
+        <div className="mb-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Munkalap címe
+            </label>
+            <input
+              type="text"
+              value={config?.title || ''}
+              onChange={(e) => setConfig({...config, title: e.target.value})}
+              className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Work Number Display Settings */}
+          <div className="bg-gray-50 rounded-lg p-4">
+            <h4 className="font-semibold mb-4 flex items-center gap-2">
+              🔢 Munkalap számozás beállításai
+            </h4>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="showWorkNumber"
+                  checked={config?.workNumberDisplay?.show || false}
+                  onChange={(e) => setConfig({
+                    ...config, 
+                    workNumberDisplay: {
+                      ...config?.workNumberDisplay,
+                      show: e.target.checked
+                    }
+                  })}
+                  className="mr-2"
+                />
+                <label htmlFor="showWorkNumber" className="text-sm font-medium text-gray-700">
+                  Munkalap szám megjelenítése
+                </label>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Pozíció
+                </label>
+                <select
+                  value={config?.workNumberDisplay?.position || 'top-left'}
+                  onChange={(e) => setConfig({
+                    ...config,
+                    workNumberDisplay: {
+                      ...config?.workNumberDisplay,
+                      position: e.target.value
+                    }
+                  })}
+                  className="w-full p-2 border border-gray-300 rounded text-sm"
+                >
+                  <option value="top-left">Bal felső</option>
+                  <option value="top-right">Jobb felső</option>
+                  <option value="bottom-left">Bal alsó</option>
+                  <option value="bottom-right">Jobb alsó</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Formátum
+                </label>
+                <input
+                  type="text"
+                  value={config?.workNumberDisplay?.format || 'MUNKA-#{number}'}
+                  onChange={(e) => setConfig({
+                    ...config,
+                    workNumberDisplay: {
+                      ...config?.workNumberDisplay,
+                      format: e.target.value
+                    }
+                  })}
+                  className="w-full p-2 border border-gray-300 rounded text-sm"
+                  placeholder="Pl: MUNKA-#{number}"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  A {'{number}'} helyére kerül a tényleges szám
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Háttérszín
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="color"
+                    value={config?.workNumberDisplay?.backgroundColor || '#3B82F6'}
+                    onChange={(e) => setConfig({
+                      ...config,
+                      workNumberDisplay: {
+                        ...config?.workNumberDisplay,
+                        backgroundColor: e.target.value
+                      }
+                    })}
+                    className="h-8 w-12 rounded border"
+                  />
+                  <input
+                    type="text"
+                    value={config?.workNumberDisplay?.backgroundColor || '#3B82F6'}
+                    onChange={(e) => setConfig({
+                      ...config,
+                      workNumberDisplay: {
+                        ...config?.workNumberDisplay,
+                        backgroundColor: e.target.value
+                      }
+                    })}
+                    className="flex-1 p-2 border border-gray-300 rounded text-sm font-mono"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Szövegszín
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="color"
+                    value={config?.workNumberDisplay?.textColor || '#FFFFFF'}
+                    onChange={(e) => setConfig({
+                      ...config,
+                      workNumberDisplay: {
+                        ...config?.workNumberDisplay,
+                        textColor: e.target.value
+                      }
+                    })}
+                    className="h-8 w-12 rounded border"
+                  />
+                  <input
+                    type="text"
+                    value={config?.workNumberDisplay?.textColor || '#FFFFFF'}
+                    onChange={(e) => setConfig({
+                      ...config,
+                      workNumberDisplay: {
+                        ...config?.workNumberDisplay,
+                        textColor: e.target.value
+                      }
+                    })}
+                    className="flex-1 p-2 border border-gray-300 rounded text-sm font-mono"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Betűméret (px)
+                </label>
+                <input
+                  type="number"
+                  min="10"
+                  max="32"
+                  value={config?.workNumberDisplay?.fontSize || 16}
+                  onChange={(e) => setConfig({
+                    ...config,
+                    workNumberDisplay: {
+                      ...config?.workNumberDisplay,
+                      fontSize: e.target.value
+                    }
+                  })}
+                  className="w-full p-2 border border-gray-300 rounded text-sm"
+                />
+              </div>
+            </div>
+
+            {/* Preview */}
+            {config?.workNumberDisplay?.show && (
+              <div className="mt-4 p-4 bg-white rounded border">
+                <p className="text-sm text-gray-600 mb-2">Előnézet:</p>
+                <div 
+                  className="inline-block"
+                  style={{
+                    backgroundColor: config.workNumberDisplay.backgroundColor || '#3B82F6',
+                    color: config.workNumberDisplay.textColor || '#FFFFFF',
+                    fontSize: `${config.workNumberDisplay.fontSize || 16}px`,
+                    padding: `${config.workNumberDisplay.padding || 12}px`,
+                    borderRadius: `${config.workNumberDisplay.borderRadius || 8}px`,
+                    border: `${config.workNumberDisplay.borderWidth || 2}px solid ${config.workNumberDisplay.borderColor || '#1E40AF'}`,
+                    fontWeight: 'bold',
+                    fontFamily: 'monospace'
+                  }}
+                >
+                  {config.workNumberDisplay.format?.replace('{number}', '43005') || '#43005'}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <DragDropContext onDragEnd={onDragEnd}>
