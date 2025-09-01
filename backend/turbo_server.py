@@ -357,6 +357,45 @@ async def get_next_sequence_number() -> int:
     
     return next_sequence
 
+async def recalculate_sequence_numbers():
+    """Recalculate sequence numbers after deletion"""
+    # Get all work orders ordered by creation date
+    work_orders = await db.work_orders.find().sort("created_at", 1).to_list(1000)
+    
+    # Update sequence numbers sequentially
+    for index, work_order in enumerate(work_orders, 1):
+        new_work_number = f"{index:05d}"  # 00001, 00002, etc.
+        
+        await db.work_orders.update_one(
+            {"id": work_order["id"]},
+            {
+                "$set": {
+                    "work_sequence": index,
+                    "work_number": new_work_number,
+                    "updated_at": datetime.utcnow()
+                }
+            }
+        )
+
+async def generate_next_work_number():
+    """Generate next work order number (legacy function)"""
+    # Find the highest existing work number
+    pipeline = [
+        {"$match": {"work_number": {"$regex": "^[0-9]+$"}}},
+        {"$addFields": {"work_number_int": {"$toInt": "$work_number"}}},
+        {"$sort": {"work_number_int": -1}},
+        {"$limit": 1}
+    ]
+    
+    result = await db.work_orders.aggregate(pipeline).to_list(1)
+    
+    if result:
+        next_number = result[0]["work_number_int"] + 1
+    else:
+        next_number = 43005  # Starting number
+    
+    return str(next_number)
+
 # API Endpoints
 @api_router.get("/")
 async def root():
