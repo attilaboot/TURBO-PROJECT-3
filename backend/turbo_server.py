@@ -1601,6 +1601,278 @@ async def import_worksheet_template(template_data: dict):
         raise HTTPException(status_code=400, detail="Hibás sablon formátum")
 
 
+# Inventory Management Endpoints
+
+@api_router.post("/inventory/items", response_model=InventoryItem)
+async def create_inventory_item(item: InventoryItemCreate):
+    """Create new inventory item"""
+    # Check if code already exists
+    existing = await db.inventory_items.find_one({"code": item.code})
+    if existing:
+        raise HTTPException(status_code=400, detail="Ez az alkatrész kód már létezik")
+    
+    item_obj = InventoryItem(**item.dict())
+    await db.inventory_items.insert_one(item_obj.dict())
+    return item_obj
+
+@api_router.get("/inventory/items", response_model=List[InventoryItemWithStock])
+async def get_inventory_items(
+    search: Optional[str] = None,
+    category: Optional[str] = None,
+    low_stock_only: bool = False
+):
+    """Get all inventory items with stock status"""
+    query = {"active": True}
+    
+    if search:
+        query["$or"] = [
+            {"name": {"$regex": search, "$options": "i"}},
+            {"code": {"$regex": search, "$options": "i"}}
+        ]
+    
+    if category:
+        query["category"] = category
+    
+    if low_stock_only:
+        query["$expr"] = {"$lte": ["$current_stock", "$min_stock"]}
+    
+    items = await db.inventory_items.find(query).sort("name", 1).to_list(1000)
+    
+    result = []
+    for item in items:
+        # Calculate stock status
+        stock_status = "ok"
+        if item["current_stock"] <= 0:
+            stock_status = "critical"
+        elif item["current_stock"] <= item["min_stock"]:
+            stock_status = "low"
+        elif item["current_stock"] >= item["max_stock"]:
+            stock_status = "overstock"
+        
+        # Get last movement and total movements
+        last_movement = await db.inventory_movements.find_one(
+            {"item_id": item["id"]}, 
+            sort=[("created_at", -1)]
+        )
+        total_movements = await db.inventory_movements.count_documents({"item_id": item["id"]})
+        
+        result.append(InventoryItemWithStock(
+            **item,
+            stock_status=stock_status,
+            last_movement=last_movement["created_at"] if last_movement else None,
+            total_movements=total_movements
+        ))
+    
+    return result
+
+@api_router.get("/inventory/items/{item_id}", response_model=InventoryItem)
+async def get_inventory_item(item_id: str):
+    """Get specific inventory item"""
+    item = await db.inventory_items.find_one({"id": item_id})
+    if not item:
+        raise HTTPException(status_code=404, detail="Alkatrész nem található")
+    return InventoryItem(**item)
+
+@api_router.put("/inventory/items/{item_id}", response_model=InventoryItem)
+async def update_inventory_item(item_id: str, item_update: InventoryItemUpdate):
+    """Update inventory item"""
+    existing = await db.inventory_items.find_one({"id": item_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Alkatrész nem található")
+    
+    update_data = {k: v for k, v in item_update.dict().items() if v is not None}
+    if update_data:
+        update_data["updated_at"] = datetime.utcnow()
+        await db.inventory_items.update_one({"id": item_id}, {"$set": update_data})
+    
+    updated = await db.inventory_items.find_one({"id": item_id})
+    return InventoryItem(**updated)
+
+@api_router.delete("/inventory/items/{item_id}")
+async def delete_inventory_item(item_id: str):
+    """Delete inventory item (soft delete)"""
+    result = await db.inventory_items.update_one(
+        {"id": item_id}, 
+        {"$set": {"active": False, "updated_at": datetime.utcnow()}}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Alkatrész nem található")
+    return {"message": "Alkatrész törölve"}
+
+@api_router.post("/inventory/movements", response_model=InventoryMovement)
+async def create_inventory_movement(movement: InventoryMovementCreate):
+    """Create inventory movement (IN/OUT)"""
+    # Get current item
+    item = await db.inventory_items.find_one({"id": movement.item_id})
+    if not item:
+        raise HTTPException(status_code=404, detail="Alkatrész nem található")
+    
+    # Calculate new stock
+    stock_before = item["current_stock"]
+    
+    if movement.movement_type == "OUT" and movement.quantity > 0:
+        movement.quantity = -movement.quantity  # Convert to negative for OUT
+    
+    stock_after = stock_before + movement.quantity
+    
+    # Validate stock doesn't go negative
+    if stock_after < 0:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Nincs elegendő készlet. Jelenlegi: {stock_before}, kért: {abs(movement.quantity)}"
+        )
+    
+    # Create movement record
+    movement_obj = InventoryMovement(
+        **movement.dict(),
+        stock_before=stock_before,
+        stock_after=stock_after
+    )
+    await db.inventory_movements.insert_one(movement_obj.dict())
+    
+    # Update item stock
+    await db.inventory_items.update_one(
+        {"id": movement.item_id},
+        {
+            "$set": {
+                "current_stock": stock_after,
+                "updated_at": datetime.utcnow()
+            }
+        }
+    )
+    
+    return movement_obj
+
+@api_router.get("/inventory/movements", response_model=List[InventoryMovement])
+async def get_inventory_movements(
+    item_id: Optional[str] = None,
+    movement_type: Optional[str] = None,
+    limit: int = 100
+):
+    """Get inventory movements"""
+    query = {}
+    if item_id:
+        query["item_id"] = item_id
+    if movement_type:
+        query["movement_type"] = movement_type
+    
+    movements = await db.inventory_movements.find(query).sort("created_at", -1).limit(limit).to_list(limit)
+    return [InventoryMovement(**movement) for movement in movements]
+
+@api_router.get("/inventory/dashboard")
+async def get_inventory_dashboard():
+    """Get inventory dashboard statistics"""
+    # Total items
+    total_items = await db.inventory_items.count_documents({"active": True})
+    
+    # Low stock items
+    low_stock_items = await db.inventory_items.count_documents({
+        "active": True,
+        "$expr": {"$lte": ["$current_stock", "$min_stock"]}
+    })
+    
+    # Out of stock items
+    out_of_stock_items = await db.inventory_items.count_documents({
+        "active": True,
+        "current_stock": 0
+    })
+    
+    # Recent movements (last 7 days)
+    seven_days_ago = datetime.utcnow() - timedelta(days=7)
+    recent_movements = await db.inventory_movements.count_documents({
+        "created_at": {"$gte": seven_days_ago}
+    })
+    
+    # Total stock value
+    pipeline = [
+        {"$match": {"active": True}},
+        {
+            "$addFields": {
+                "total_value": {"$multiply": ["$current_stock", "$purchase_price"]}
+            }
+        },
+        {
+            "$group": {
+                "_id": None,
+                "total_stock_value": {"$sum": "$total_value"}
+            }
+        }
+    ]
+    
+    stock_value_result = await db.inventory_items.aggregate(pipeline).to_list(1)
+    total_stock_value = stock_value_result[0]["total_stock_value"] if stock_value_result else 0
+    
+    return {
+        "total_items": total_items,
+        "low_stock_items": low_stock_items,
+        "out_of_stock_items": out_of_stock_items,
+        "recent_movements": recent_movements,
+        "total_stock_value": total_stock_value,
+        "last_updated": datetime.utcnow()
+    }
+
+@api_router.post("/inventory/initialize-default-items")
+async def initialize_default_inventory():
+    """Initialize default inventory items"""
+    default_items = [
+        {
+            "name": "Geometria",
+            "code": "GEO-001",
+            "category": "turbo_parts",
+            "current_stock": 5,
+            "min_stock": 2,
+            "unit": "db",
+            "purchase_price": 85.0
+        },
+        {
+            "name": "C.H.R.A",
+            "code": "CHRA-001", 
+            "category": "turbo_parts",
+            "current_stock": 3,
+            "min_stock": 1,
+            "unit": "db",
+            "purchase_price": 450.0
+        },
+        {
+            "name": "Aktuátor",
+            "code": "ACT-001",
+            "category": "turbo_parts",
+            "current_stock": 8,
+            "min_stock": 3,
+            "unit": "db",
+            "purchase_price": 120.0
+        },
+        {
+            "name": "Javító készlet",
+            "code": "SET-001",
+            "category": "turbo_parts",
+            "current_stock": 15,
+            "min_stock": 5,
+            "unit": "db",
+            "purchase_price": 25.0
+        },
+        {
+            "name": "Tisztítószer",
+            "code": "CLEAN-001",
+            "category": "consumables",
+            "current_stock": 2,
+            "min_stock": 1,
+            "unit": "liter",
+            "purchase_price": 15.0
+        }
+    ]
+    
+    created_count = 0
+    for item_data in default_items:
+        existing = await db.inventory_items.find_one({"code": item_data["code"]})
+        if not existing:
+            item_obj = InventoryItem(**item_data)
+            await db.inventory_items.insert_one(item_obj.dict())
+            created_count += 1
+    
+    return {"message": f"{created_count} alapértelmezett alkatrész hozzáadva"}
+
+
 # Include router
 app.include_router(api_router)
 
