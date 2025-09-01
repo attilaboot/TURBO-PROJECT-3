@@ -2864,27 +2864,43 @@ const NewWorkOrder = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Autó márka *
                     </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        list="car-makes-list"
-                        placeholder="pl. BMW, Audi, Mercedes"
-                        value={workOrderData.car_make}
-                        onChange={(e) => {
+                    <select
+                      value={workOrderData.car_make}
+                      onChange={(e) => {
+                        setWorkOrderData({...workOrderData, car_make: e.target.value, car_model: ''});
+                        handleCarMakeSelect(e.target.value);
+                      }}
+                      className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                      required
+                    >
+                      <option value="">Válasszon márkát...</option>
+                      <option value="BMW">BMW</option>
+                      <option value="Mercedes-Benz">Mercedes-Benz</option>
+                      <option value="Audi">Audi</option>
+                      <option value="Volkswagen">Volkswagen</option>
+                      <option value="Ford">Ford</option>
+                      <option value="Peugeot">Peugeot</option>
+                      <option value="Renault">Renault</option>
+                      <option value="Opel">Opel</option>
+                      <option value="Citroën">Citroën</option>
+                      <option value="Škoda">Škoda</option>
+                      <option value="Toyota">Toyota</option>
+                      <option value="Nissan">Nissan</option>
+                    </select>
+                    <input
+                      type="text"
+                      placeholder="Vagy írjon be egyedi márkát..."
+                      className="w-full p-2 border border-gray-300 rounded text-sm mt-2"
+                      onBlur={(e) => {
+                        if (e.target.value) {
                           setWorkOrderData({...workOrderData, car_make: e.target.value, car_model: ''});
                           handleCarMakeSelect(e.target.value);
-                        }}
-                        className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-                      />
-                      <datalist id="car-makes-list">
-                        {carMakes.map(make => (
-                          <option key={make.id} value={make.name} />
-                        ))}
-                      </datalist>
-                    </div>
+                        }
+                      }}
+                    />
                   </div>
 
                   <div>
