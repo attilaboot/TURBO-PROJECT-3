@@ -2436,6 +2436,7 @@ const NewWorkOrder = () => {
   const [vehicles, setVehicles] = useState([]);
   const [turboParts, setTurboParts] = useState([]);
   const [workProcesses, setWorkProcesses] = useState([]);
+  const [workOrders, setWorkOrders] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   
