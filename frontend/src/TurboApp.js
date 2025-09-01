@@ -2825,9 +2825,15 @@ const NewWorkOrder = () => {
             <h1 className="text-3xl font-bold text-gray-800 mb-2">📋 Új Munkalap</h1>
             <p className="text-gray-600">Turbó javítási munkalap létrehozása</p>
           </div>
-          <Link to="/" className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 font-medium">
-            🏠 Vissza
-          </Link>
+          <div className="flex items-center gap-4">
+            {/* Munkalap száma megjelenítése */}
+            <div className="bg-blue-500 text-white px-4 py-2 rounded-lg font-bold text-lg border-2 border-blue-700 shadow-md">
+              MUNKA-#{Math.floor(Math.random() * 90000 + 10000)}
+            </div>
+            <Link to="/" className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 font-medium">
+              🏠 Vissza
+            </Link>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
