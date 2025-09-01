@@ -2911,9 +2911,15 @@ const NewWorkOrder = () => {
             <p className="text-gray-600">Turbó javítási munkalap létrehozása</p>
           </div>
           <div className="flex items-center gap-4">
-            {/* Munkalap száma (következő sorszám előnézet) */}
-            <div className="bg-green-500 text-white px-4 py-2 rounded-lg font-bold text-lg border-2 border-green-700 shadow-md">
-              MUNKA-#{(workOrders.length + 1).toString().padStart(5, '0')}
+            <div className="flex flex-col items-end gap-2">
+              {/* Munkalap száma (következő sorszám előnézet) */}
+              <div className="bg-green-500 text-white px-4 py-2 rounded-lg font-bold text-lg border-2 border-green-700 shadow-md">
+                MUNKA-#{(workOrders.length + 1).toString().padStart(5, '0')}
+              </div>
+              {/* Létrehozás dátuma */}
+              <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded text-sm font-medium">
+                📅 {new Date().toLocaleDateString('hu-HU')}
+              </div>
             </div>
             <Link to="/" className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 font-medium">
               🏠 Vissza
