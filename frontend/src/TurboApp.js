@@ -6,6 +6,7 @@ import WorksheetEditor from "./components/WorksheetEditor";
 import AdminPanel from "./components/AdminPanel";
 import InventoryManager from "./components/InventoryManager";
 import InventorySettings from "./components/InventorySettings";
+import MainPage from "./components/MainPage";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
