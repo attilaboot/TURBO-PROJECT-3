@@ -144,6 +144,18 @@ const TemplateManager = ({ onLoadTemplate, currentConfig }) => {
         createdAt: new Date().toISOString(),
         config: {
           title: "Részletes Turbó Munkalap",
+          workNumberDisplay: {
+            show: true,
+            position: "top-left", 
+            format: "#{number} - RÉSZLETES",
+            backgroundColor: "#3B82F6",
+            textColor: "#FFFFFF",
+            fontSize: "16",
+            padding: "12",
+            borderRadius: "8",
+            borderWidth: "2",
+            borderColor: "#1E40AF"
+          },
           sections: [
             {
               id: "client_detailed",
