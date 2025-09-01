@@ -2433,7 +2433,7 @@ const WorkOrders = () => {
                       </div>
                       <div className="flex justify-between">
                         <span>Recond (felújítás):</span>
-                        <span className="font-medium">{selectedOrder.reconditioning_price}€</span>
+                        <span className="font-medium">{selectedOrder.reconditioning_price} LEI</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Turbo:</span>
