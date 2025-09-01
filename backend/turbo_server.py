@@ -1402,7 +1402,77 @@ async def get_work_order_print_data(work_order_id: str):
     }
 
 
-# Inventory Management Models
+# GitHub Project Backend API Adaptation
+from enum import Enum
+
+class MovementType(str, Enum):
+    IN = "IN"
+    OUT = "OUT"
+
+# Part Types
+class PartType(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class PartTypeCreate(BaseModel):
+    name: str
+
+# Suppliers
+class Supplier(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class SupplierCreate(BaseModel):
+    name: str
+
+# Parts (Inventory Items adapted)
+class Part(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    code: str
+    part_type_id: str
+    supplier_id: str
+    notes: str = ""
+    stock_quantity: int = 0
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class PartCreate(BaseModel):
+    code: str
+    part_type_id: str
+    supplier_id: str
+    notes: str = ""
+
+class PartUpdate(BaseModel):
+    code: Optional[str] = None
+    part_type_id: Optional[str] = None
+    supplier_id: Optional[str] = None
+    notes: Optional[str] = None
+
+class StockMovement(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    part_id: str
+    movement_type: MovementType
+    quantity: int
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class StockMovementCreate(BaseModel):
+    part_id: str
+    movement_type: MovementType
+    quantity: int
+
+class PartWithDetails(BaseModel):
+    id: str
+    code: str
+    part_type_name: str
+    supplier_name: str
+    notes: str
+    stock_quantity: int
+    created_at: datetime
+    updated_at: datetime
+
+# Keep old models for compatibility
 class InventoryItem(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str                          # pl. "Geometria"
