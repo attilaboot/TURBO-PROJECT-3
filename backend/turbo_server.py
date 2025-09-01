@@ -1553,6 +1553,18 @@ class MovementType(str, Enum):
     IN = "IN"
     OUT = "OUT"
 
+class WorkStatus(str, Enum):
+    DRAFT = "DRAFT"
+    RECEIVED = "RECEIVED"
+    IN_PROGRESS = "IN_PROGRESS"
+    QUOTED = "QUOTED"
+    ACCEPTED = "ACCEPTED"
+    REJECTED = "REJECTED"
+    WORKING = "WORKING"
+    READY = "READY"
+    DELIVERED = "DELIVERED"
+    FINALIZED = "FINALIZED"
+
 # Part Types
 class PartType(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
