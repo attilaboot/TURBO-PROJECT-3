@@ -2254,6 +2254,34 @@ const WorkOrders = () => {
                       >
                         🖨️ Nyomtat
                       </button>
+                      
+                      {/* Véglegesítés/Törlés gombok */}
+                      {!order.is_finalized ? (
+                        <>
+                          <button
+                            onClick={() => finalizeWorkOrder(order.id)}
+                            className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-xs"
+                            title="Munkalap véglegesítése"
+                          >
+                            ✅ Véglegesít
+                          </button>
+                          <button
+                            onClick={() => deleteWorkOrder(order.id)}
+                            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-xs"
+                            title="Munkalap törlése"
+                          >
+                            🗑️ Töröl
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={() => unfinalizeWorkOrder(order.id)}
+                          className="bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 text-xs"
+                          title="Véglegesítés visszavonása (Admin)"
+                        >
+                          ↩️ Visszavon
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
