@@ -233,6 +233,51 @@ const AdminPanel = () => {
     }
   };
 
+  // PIN Code Authentication Screen
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">🛡️ Admin Bejelentkezés</h1>
+            <p className="text-gray-600">Adja meg a 4 számjegyű PIN kódot</p>
+          </div>
+          
+          <form onSubmit={handlePinSubmit}>
+            <div className="mb-4">
+              <input
+                type="password"
+                maxLength="4"
+                value={pinCode}
+                onChange={(e) => setPinCode(e.target.value.replace(/\D/g, ''))}
+                className="w-full p-4 text-2xl text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 tracking-widest font-mono"
+                placeholder="••••"
+                autoFocus
+              />
+            </div>
+            
+            <button
+              type="submit"
+              disabled={pinCode.length !== 4}
+              className="w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed font-medium"
+            >
+              🔓 Bejelentkezés
+            </button>
+          </form>
+          
+          <div className="mt-6 text-center">
+            <button
+              onClick={() => window.location.href = '/'}
+              className="text-gray-500 hover:text-gray-700 text-sm"
+            >
+              ← Vissza a főoldalra
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
