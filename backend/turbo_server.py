@@ -874,7 +874,7 @@ async def initialize_data():
 # Printing endpoints
 @api_router.get("/work-orders/{work_order_id}/pdf")
 async def generate_work_order_pdf(work_order_id: str):
-    from weasyprint import HTML, CSS
+    from weasyprint import HTML
     from jinja2 import Template
     from fastapi.responses import Response
     
@@ -1801,7 +1801,7 @@ async def import_worksheet_template(template_data: dict):
         return new_template
     except KeyError as e:
         raise HTTPException(status_code=400, detail=f"Hiányzó mező: {e}")
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=400, detail="Hibás sablon formátum")
 
 
