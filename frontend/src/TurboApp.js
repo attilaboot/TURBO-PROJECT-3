@@ -4189,9 +4189,14 @@ const WorkOrderDetail = () => {
 
         {/* Work Order Content */}
         <div className="bg-white rounded-lg shadow-md p-8 print:shadow-none print:rounded-none relative">
-          {/* Munkalap száma (bal felső sarok) */}
-          <div className="absolute top-4 left-4 bg-blue-500 text-white px-4 py-2 rounded-lg font-bold text-lg border-2 border-blue-700 shadow-md">
-            MUNKA-#{workOrder.work_number}
+          {/* Munkalap száma és dátuma (bal felső sarok) */}
+          <div className="absolute top-4 left-4 flex flex-col gap-2">
+            <div className="bg-blue-500 text-white px-4 py-2 rounded-lg font-bold text-lg border-2 border-blue-700 shadow-md">
+              MUNKA-#{workOrder.work_number}
+            </div>
+            <div className="bg-green-500 text-white px-3 py-1 rounded text-sm font-medium">
+              📅 {new Date(workOrder.created_at).toLocaleDateString('hu-HU')}
+            </div>
           </div>
 
           {/* Print Header */}
