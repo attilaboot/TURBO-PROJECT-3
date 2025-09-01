@@ -219,6 +219,9 @@ const Dashboard = () => {
         {/* Navigation */}
         <nav className="bg-white rounded-lg shadow-md p-4 mb-8">
           <div className="flex flex-wrap gap-4">
+            <Link to="/main" className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 font-medium">
+              🏠 Főmenü
+            </Link>
             <Link to="/clients" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 font-medium">
               👥 Ügyfelek
             </Link>
@@ -230,6 +233,9 @@ const Dashboard = () => {
             </Link>
             <Link to="/parts" className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 font-medium">
               🔧 Alkatrészek
+            </Link>
+            <Link to="/inventory" className="bg-violet-500 text-white px-4 py-2 rounded hover:bg-violet-600 font-medium">
+              📦 Raktár
             </Link>
           </div>
         </nav>
