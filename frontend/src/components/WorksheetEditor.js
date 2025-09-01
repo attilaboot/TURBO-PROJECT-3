@@ -335,6 +335,8 @@ const WorksheetEditor = () => {
         </DragDropContext>
       </div>
 
+      )}
+
       {/* Field Editor Modal */}
       {showFieldEditor && activeField && (
         <FieldEditor
