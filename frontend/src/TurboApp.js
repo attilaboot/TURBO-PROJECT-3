@@ -2444,7 +2444,7 @@ const WorkOrders = () => {
                         <span>Összesen:</span>
                         <span className="text-green-600">
                           {(selectedOrder.cleaning_price + selectedOrder.reconditioning_price + selectedOrder.turbo_price + 
-                           (selectedOrder.parts?.filter(p => p.selected).reduce((sum, p) => sum + p.price, 0) || 0)).toFixed(0)}€
+                           (selectedOrder.parts?.filter(p => p.selected).reduce((sum, p) => sum + p.price, 0) || 0)).toFixed(0)} LEI
                         </span>
                       </div>
                     </div>
