@@ -726,6 +726,100 @@ async def update_work_order(work_order_id: str, work_order_update: WorkOrderUpda
     updated = await db.work_orders.find_one({"id": work_order_id})
     return WorkOrder(**updated)
 
+# Helper function to recalculate sequence numbers
+async def recalculate_sequence_numbers():
+    """Recalculate sequence numbers for all work orders"""
+    # Get all work orders sorted by creation date
+    work_orders = await db.work_orders.find().sort("created_at", 1).to_list(None)
+    
+    # Update sequence numbers
+    for index, work_order in enumerate(work_orders, 1):
+        new_sequence = index
+        new_work_number = f"{new_sequence:05d}"  # 00001, 00002, etc.
+        
+        await db.work_orders.update_one(
+            {"id": work_order["id"]},
+            {
+                "$set": {
+                    "work_sequence": new_sequence,
+                    "work_number": new_work_number,
+                    "updated_at": datetime.utcnow()
+                }
+            }
+        )
+
+@api_router.delete("/work-orders/{work_order_id}")
+async def delete_work_order(work_order_id: str):
+    """Delete work order (only if not finalized)"""
+    work_order = await db.work_orders.find_one({"id": work_order_id})
+    if not work_order:
+        raise HTTPException(status_code=404, detail="Munkalap nem található")
+    
+    # Check if work order is finalized
+    if work_order.get("is_finalized", False):
+        raise HTTPException(status_code=400, detail="Véglegesített munkalapot nem lehet törölni!")
+    
+    deleted_sequence = work_order.get("work_sequence", 0)
+    
+    # Delete the work order
+    result = await db.work_orders.delete_one({"id": work_order_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Munkalap nem található")
+    
+    # Recalculate sequence numbers for remaining work orders
+    await recalculate_sequence_numbers()
+    
+    return {"message": "Munkalap törölve és számozás frissítve"}
+
+@api_router.post("/work-orders/{work_order_id}/finalize")
+async def finalize_work_order(work_order_id: str):
+    """Finalize work order (cannot be deleted after this)"""
+    work_order = await db.work_orders.find_one({"id": work_order_id})
+    if not work_order:
+        raise HTTPException(status_code=404, detail="Munkalap nem található")
+    
+    if work_order.get("is_finalized", False):
+        raise HTTPException(status_code=400, detail="A munkalap már véglegesítve van")
+    
+    # Update work order to finalized
+    await db.work_orders.update_one(
+        {"id": work_order_id},
+        {
+            "$set": {
+                "is_finalized": True,
+                "finalized_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow(),
+                "status": WorkStatus.RECEIVED  # Change from DRAFT to RECEIVED
+            }
+        }
+    )
+    
+    updated = await db.work_orders.find_one({"id": work_order_id})
+    return WorkOrder(**updated)
+
+@api_router.post("/work-orders/{work_order_id}/unfinalize")
+async def unfinalize_work_order(work_order_id: str):
+    """Unfinalize work order (for admin purposes)"""
+    work_order = await db.work_orders.find_one({"id": work_order_id})
+    if not work_order:
+        raise HTTPException(status_code=404, detail="Munkalap nem található")
+    
+    # Update work order to draft
+    await db.work_orders.update_one(
+        {"id": work_order_id},
+        {
+            "$set": {
+                "is_finalized": False,
+                "finalized_at": None,
+                "updated_at": datetime.utcnow(),
+                "status": WorkStatus.DRAFT
+            }
+        }
+    )
+    
+    updated = await db.work_orders.find_one({"id": work_order_id})
+    return WorkOrder(**updated)
+
 
 # Initialize default data
 @api_router.post("/initialize-data")
