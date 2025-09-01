@@ -33,6 +33,45 @@ const AdminPanel = () => {
     }
   }, []);
 
+  const getCurrentAdminPin = () => {
+    return localStorage.getItem('adminPin') || '3655'; // Default PIN
+  };
+
+  const handlePinSubmit = (e) => {
+    e.preventDefault();
+    const currentPin = getCurrentAdminPin();
+    
+    if (pinCode === currentPin) {
+      setIsAuthenticated(true);
+      sessionStorage.setItem('adminAuthenticated', 'true');
+      setPinCode('');
+      loadSystemData();
+    } else {
+      alert('Hibás PIN kód!');
+      setPinCode('');
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    e.preventDefault();
+    
+    if (newPassword.length !== 4 || !/^\d{4}$/.test(newPassword)) {
+      alert('A PIN kód pontosan 4 számjegyből kell álljon!');
+      return;
+    }
+    
+    localStorage.setItem('adminPin', newPassword);
+    setNewPassword('');
+    setShowPasswordChange(false);
+    alert('PIN kód sikeresen megváltoztatva!');
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    sessionStorage.removeItem('adminAuthenticated');
+    setPinCode('');
+  };
+
   const loadSystemData = async () => {
     try {
       await Promise.all([
