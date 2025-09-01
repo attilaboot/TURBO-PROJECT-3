@@ -1096,6 +1096,11 @@ const Settings = () => {
               </div>
             )}
 
+            {/* Inventory Settings Tab */}
+            {activeTab === 'inventory' && (
+              <InventorySettings />
+            )}
+
             {/* Worksheet Editor Tab */}
             {activeTab === 'worksheet' && (
               <WorksheetEditor />
