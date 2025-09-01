@@ -2064,6 +2064,48 @@ const WorkOrders = () => {
     window.location.href = `/work-order-detail?id=${orderId}`;
   };
 
+  const finalizeWorkOrder = async (workOrderId) => {
+    if (!window.confirm('Biztosan véglegesíteni szeretnéd ezt a munkalapot? Véglegesítés után nem törölhető!')) {
+      return;
+    }
+
+    try {
+      await axios.post(`${API}/work-orders/${workOrderId}/finalize`);
+      alert('Munkalap sikeresen véglegesítve!');
+      loadWorkOrders();
+    } catch (error) {
+      alert('Hiba: ' + (error.response?.data?.detail || 'Nem sikerült véglegesíteni'));
+    }
+  };
+
+  const unfinalizeWorkOrder = async (workOrderId) => {
+    if (!window.confirm('Biztosan visszavonni szeretnéd a véglegesítést? (Admin funkció)')) {
+      return;
+    }
+
+    try {
+      await axios.post(`${API}/work-orders/${workOrderId}/unfinalize`);
+      alert('Véglegesítés visszavonva!');
+      loadWorkOrders();
+    } catch (error) {
+      alert('Hiba: ' + (error.response?.data?.detail || 'Nem sikerült visszavonni'));
+    }
+  };
+
+  const deleteWorkOrder = async (workOrderId) => {
+    if (!window.confirm('Biztosan törölni szeretnéd ezt a munkalapot? A számozás automatikusan frissül.')) {
+      return;
+    }
+
+    try {
+      await axios.delete(`${API}/work-orders/${workOrderId}`);
+      alert('Munkalap törölve és számozás frissítve!');
+      loadWorkOrders();
+    } catch (error) {
+      alert('Hiba: ' + (error.response?.data?.detail || 'Nem sikerült törölni'));
+    }
+  };
+
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       await axios.put(`${API}/work-orders/${orderId}`, { status: newStatus });
