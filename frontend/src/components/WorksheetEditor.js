@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import TemplateManager from './TemplateManager';
 
 const WorksheetEditor = () => {
   const [config, setConfig] = useState(null);
