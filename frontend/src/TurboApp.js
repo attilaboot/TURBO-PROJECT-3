@@ -4097,7 +4097,12 @@ const WorkOrderDetail = () => {
         )}
 
         {/* Work Order Content */}
-        <div className="bg-white rounded-lg shadow-md p-8 print:shadow-none print:rounded-none">
+        <div className="bg-white rounded-lg shadow-md p-8 print:shadow-none print:rounded-none relative">
+          {/* Munkalap száma (bal felső sarok) */}
+          <div className="absolute top-4 left-4 bg-blue-500 text-white px-4 py-2 rounded-lg font-bold text-lg border-2 border-blue-700 shadow-md">
+            MUNKA-#{workOrder.work_number}
+          </div>
+
           {/* Print Header */}
           <div className="hidden print:block text-center mb-6 border-b-2 border-gray-800 pb-4">
             <h1 className="text-2xl font-bold mb-2">🔧 TURBÓ SZERVIZ</h1>
