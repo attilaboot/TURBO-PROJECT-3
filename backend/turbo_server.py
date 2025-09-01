@@ -565,6 +565,10 @@ async def get_vehicles(client_id: Optional[str] = None):
 @api_router.post("/work-orders", response_model=WorkOrder)
 async def create_work_order(work_order: WorkOrderCreate):
     """Create a new work order"""
+    client = await db.clients.find_one({"id": work_order.client_id})
+    if not client:
+        raise HTTPException(status_code=400, detail="Ügyfél nem található")
+    
     # Get next sequence number
     next_sequence = await get_next_sequence_number()
     
