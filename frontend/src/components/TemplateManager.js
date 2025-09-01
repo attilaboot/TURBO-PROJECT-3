@@ -364,6 +364,18 @@ const TemplateManager = ({ onLoadTemplate, currentConfig }) => {
         createdAt: new Date().toISOString(),
         config: {
           title: "Gyors Diagnosztika Lap",
+          workNumberDisplay: {
+            show: true,
+            position: "top-right",
+            format: "DIAG-{number}",
+            backgroundColor: "#F59E0B",
+            textColor: "#FFFFFF",
+            fontSize: "15",
+            padding: "10",
+            borderRadius: "6",
+            borderWidth: "2",
+            borderColor: "#D97706"
+          },  
           sections: [
             {
               id: "client_quick",
