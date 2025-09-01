@@ -759,8 +759,6 @@ async def delete_work_order(work_order_id: str):
     if work_order.get("is_finalized", False):
         raise HTTPException(status_code=400, detail="Véglegesített munkalapot nem lehet törölni!")
     
-    deleted_sequence = work_order.get("work_sequence", 0)
-    
     # Delete the work order
     result = await db.work_orders.delete_one({"id": work_order_id})
     if result.deleted_count == 0:
