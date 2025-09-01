@@ -253,7 +253,7 @@ class WorkOrder(BaseModel):
     turbo_price: float = 240.0      # Turbo
     
     # Workflow
-    status: WorkStatus = WorkStatus.RECEIVED
+    status: WorkStatus = WorkStatus.DRAFT
     is_finalized: bool = False      # Véglegesítve van-e
     quote_sent: bool = False        # OFERTAT
     quote_accepted: bool = False    # ACCEPT
