@@ -100,6 +100,7 @@ const statusTranslations = {
 };
 
 const statusColors = {
+  'DRAFT': 'bg-gray-100 text-gray-800',
   'RECEIVED': 'bg-blue-100 text-blue-800',
   'IN_PROGRESS': 'bg-yellow-100 text-yellow-800',
   'QUOTED': 'bg-purple-100 text-purple-800', 
@@ -107,7 +108,8 @@ const statusColors = {
   'REJECTED': 'bg-red-100 text-red-800',
   'WORKING': 'bg-orange-100 text-orange-800',
   'READY': 'bg-teal-100 text-teal-800',
-  'DELIVERED': 'bg-gray-100 text-gray-800'
+  'DELIVERED': 'bg-gray-100 text-gray-800',
+  'FINALIZED': 'bg-indigo-100 text-indigo-800'
 };
 
 // Dashboard Component  
