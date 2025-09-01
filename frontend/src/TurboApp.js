@@ -2414,7 +2414,7 @@ const WorkOrders = () => {
                               <div className="font-mono text-xs text-gray-600">{part.part_code}</div>
                               <div className="text-xs text-gray-500">{part.supplier}</div>
                             </div>
-                            <div className="font-bold text-blue-600">{part.price.toFixed(0)}€</div>
+                            <div className="font-bold text-blue-600">{part.price.toFixed(0)} LEI</div>
                           </div>
                         ))}
                       </div>
