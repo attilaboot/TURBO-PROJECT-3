@@ -9,6 +9,8 @@ const WorksheetEditor = () => {
   const [showFieldEditor, setShowFieldEditor] = useState(false);
   const [fieldTypes, setFieldTypes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('editor');
+  const [showTemplateManager, setShowTemplateManager] = useState(false);
 
   useEffect(() => {
     loadWorksheetConfig();
