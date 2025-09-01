@@ -2,6 +2,18 @@
   "version": "1.0",
   "worksheetConfig": {
     "title": "Turbó Szerviz Munkalap",
+    "workNumberDisplay": {
+      "show": true,
+      "position": "top-left",
+      "format": "MUNKA-#{number}",
+      "backgroundColor": "#3B82F6",
+      "textColor": "#FFFFFF",
+      "fontSize": "16",
+      "padding": "12",
+      "borderRadius": "8",
+      "borderWidth": "2",
+      "borderColor": "#1E40AF"
+    },
     "sections": [
       {
         "id": "client_info",
