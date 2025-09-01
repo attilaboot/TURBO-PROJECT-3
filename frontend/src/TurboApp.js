@@ -2437,7 +2437,7 @@ const WorkOrders = () => {
                       </div>
                       <div className="flex justify-between">
                         <span>Turbo:</span>
-                        <span className="font-medium">{selectedOrder.turbo_price}€</span>
+                        <span className="font-medium">{selectedOrder.turbo_price} LEI</span>
                       </div>
                       <hr className="my-2" />
                       <div className="flex justify-between font-bold text-lg">
